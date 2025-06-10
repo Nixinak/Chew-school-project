@@ -1,0 +1,130 @@
+body {
+    background-color: #111;
+    color: #eee;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #1c1c1c;
+    padding: 20px;
+    border-right: 1px solid #333;
+}
+
+.admin-sidebar h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.admin-sidebar a {
+    display: block;
+    padding: 10px;
+    color: #ccc;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.admin-sidebar a:hover {
+    background-color: #333;
+}
+
+.admin-main {
+    flex: 1;
+    padding: 40px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-metric {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.admin-metric h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #aaa;
+}
+
+.admin-metric p {
+    font-size: 24px;
+    color: #fff;
+    margin: 0;
+}
+
+/* Vylepšené styly pro tabulky v administraci */
+.admin-main table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #1c1c1c;
+    border: 1px solid #444; /* Vnější rámeček tabulky */
+}
+
+.admin-main th, .admin-main td {
+    padding: 12px 15px;
+    text-align: left;
+    color: #eee;
+    border: 1px solid #444; /* Rámečky pro každou buňku */
+}
+
+.admin-main th {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.admin-main tr:nth-child(even) {
+    background-color: #222; /* Lehké odlišení sudých řádků pro lepší čitelnost */
+}
+
+.admin-main td form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-main select {
+    padding: 6px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: #eee;
+}
+
+.admin-main button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.admin-main button:hover {
+    background-color: #555;
+}
+
+.admin-main button:disabled {
+    background-color: #2a2a2a;
+    color: #666;
+    cursor: not-allowed;
+}

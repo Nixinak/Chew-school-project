@@ -1,0 +1,4 @@
+$db_host = "localhost";
+$db_user = "root";
+$db_pass = "TVOJE_HESLO_K_DATABAZI";
+$db_name = "chewforever";
