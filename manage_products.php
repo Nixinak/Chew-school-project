@@ -62,6 +62,18 @@ $products = $db->query("SELECT id, name, price FROM products");
         button.delete:hover {
             background-color: darkred;
         }
+
+        a.edit-button {
+            background-color: #0d6efd;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        a.edit-button:hover {
+            background-color: #0b5ed7;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +81,7 @@ $products = $db->query("SELECT id, name, price FROM products");
     <div class="admin-sidebar">
         <h2>Admin Panel</h2>
         <a href="admin_panel.php">Admin Panel</a>
-        <a href="delete_products.php">Správa produktů</a>
+        <a href="manage_products.php">Správa produktů</a>
         <a href="add_product.php">Přidat nový produkt</a>
         <a href="manage_categories.php">Správa kategorií</a>
         <a href="manage_users.php">Správa uživatelů</a>
@@ -92,20 +104,21 @@ $products = $db->query("SELECT id, name, price FROM products");
                     <th>Akce</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php while ($product = $products->fetch_assoc()){ ?>
-                    <tr>
-                        <td><?php echo htmlentities($product["name"], ENT_QUOTES, "UTF-8"); ?></td>
-                        <td><?php echo number_format($product["price"], 2); ?> Kč</td>
-                        <td>
-                            <form method="post" onsubmit="return confirm('Opravdu smazat produkt?');">
-                                <input type="hidden" name="delete_id" value="<?php echo $product["id"]; ?>">
-                                <button type="submit" class="delete">Smazat</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </tbody>
+                <tbody>
+                    <?php while ($product = $products->fetch_assoc()){ ?>
+                        <tr>
+                            <td><?php echo htmlentities($product["name"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo number_format($product["price"], 2); ?> Kč</td>
+                            <td class="actions-cell">
+                                <a href="edit_product.php?id=<?php echo $product['id']; ?>" class="edit-button">Upravit</a>
+                                <form method="post" onsubmit="return confirm('Opravdu smazat produkt?');" style="display: inline;">
+                                    <input type="hidden" name="delete_id" value="<?php echo $product["id"]; ?>">
+                                    <button type="submit" class="delete">Smazat</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
         </table>
 
     </div>

@@ -11,27 +11,30 @@ if (!isLoggedIn() || $_SESSION["loggedInUser"]["role"] !== "admin") {
 $message = "";
 $currentAdminId = $_SESSION["loggedInUser"]["id"];
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["change_role"])) {
-    $userIdToChange = (int)$_POST["user_id"];
-    $newRole = $_POST["new_role"];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $userId = (int)($_POST["user_id"] ?? 0);
+    $newRole = $_POST["new_role"] ?? "";
 
-    if ($userIdToChange === $currentAdminId) {
-        $message = "<p style='color: red;'>Nemůžete změnit roli sami sobě.</p>";
-    } elseif ($newRole !== 'user' && $newRole !== 'admin') {
-        $message = "<p style='color: red;'>Neplatná role.</p>";
-    } else {
-        $sql = "UPDATE users SET role = '$newRole' WHERE id = $userIdToChange";
-        
-        if ($db->query($sql)) {
-            $message = "<p style='color: #66ff66;'>Role uživatele byla úspěšně změněna.</p>";
+    if (isset($_POST["change_role"])) {
+        if ($userId === $currentAdminId) {
+            $message = "<p style='color: red;'>Nemůžete změnit roli sami sobě.</p>";
+        } elseif (!in_array($newRole, ["user", "admin"])) {
+            $message = "<p style='color: red;'>Neplatná role.</p>";
         } else {
-            $message = "<p style='color: red;'>Chyba při změně role.</p>";
+            $stmt = $db->prepare("UPDATE users SET role = ? WHERE id = ?");
+            $stmt->bind_param("si", $newRole, $userId);
+            if ($stmt->execute()) {
+                $message = "<p style='color: #66ff66;'>Role uživatele byla úspěšně změněna.</p>";
+            } else {
+                $message = "<p style='color: red;'>Chyba při změně role.</p>";
+            }
         }
     }
 }
 
 $usersResult = $db->query("SELECT id, email, role FROM users ORDER BY id ASC");
 ?>
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -40,13 +43,60 @@ $usersResult = $db->query("SELECT id, email, role FROM users ORDER BY id ASC");
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/style_admin_panel.css">
     <link rel="icon" type="image/png" href="pics/icon.png">
+    <style>
+        table {
+            width: 100%;
+            background-color: #1c1c1c;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            text-align: left;
+            color: #eee;
+        }
+
+        th {
+            background-color: #2a2a2a;
+        }
+
+        button.delete {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button.delete:hover {
+            background-color: darkred;
+        }
+
+        a.edit-button {
+            display: inline-block;
+            background-color: #2196F3;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        a.edit-button:hover {
+            background-color: #0b7dda;
+        }
+    </style>
 </head>
 <body>
 <div class="admin-container">
     <div class="admin-sidebar">
         <h2>Admin Panel</h2>
         <a href="admin_panel.php">Admin Panel</a>
-        <a href="delete_products.php">Správa produktů</a>
+        <a href="manage_products.php">Správa produktů</a>
         <a href="add_product.php">Přidat nový produkt</a>
         <a href="manage_categories.php">Správa kategorií</a>
         <a href="manage_users.php">Správa uživatelů</a>
@@ -84,12 +134,8 @@ $usersResult = $db->query("SELECT id, email, role FROM users ORDER BY id ASC");
                                     <input type="hidden" name="user_id" value="<?php echo $user["id"]; ?>">
                                     <input type="hidden" name="change_role" value="1">
                                     <select name="new_role">
-                                        <option value="user" <?php if ($user["role"] === 'user') {
-                                                                    echo 'selected';
-                                                                } ?>>user</option>
-                                        <option value="admin" <?php if ($user["role"] === 'admin') {
-                                                                    echo 'selected';
-                                                                } ?>>admin</option>
+                                        <option value="user" <?php if ($user["role"] === 'user') echo 'selected'; ?>>user</option>
+                                        <option value="admin" <?php if ($user["role"] === 'admin') echo 'selected'; ?>>admin</option>
                                     </select>
                                     <button type="submit">Uložit</button>
                                 </form>
@@ -99,7 +145,6 @@ $usersResult = $db->query("SELECT id, email, role FROM users ORDER BY id ASC");
                 <?php } ?>
             </tbody>
         </table>
-
     </div>
 </div>
 </body>

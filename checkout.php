@@ -1,17 +1,47 @@
 <?php
+session_start();
 require_once "./php/config.php";
 require_once "./php/users.php";
 
-$query = "SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id";
-$result = $db->query($query);
+if (!isLoggedIn()) {
+    header("Location: login_page.php");
+    exit;
+}
+
+$userId = $_SESSION['loggedInUser']['id'];
+$totalPrice = 0;
+
+$sql = "SELECT
+            p.name, p.price, pv.size, ci.quantity
+        FROM cart_items ci
+        JOIN product_variants pv ON ci.product_variant_id = pv.id
+        JOIN products p ON pv.product_id = p.id
+        WHERE ci.user_id = ?";
+
+$stmt = $db->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$cartItems = [];
+while ($row = $result->fetch_assoc()) {
+    $cartItems[] = $row;
+}
+$stmt->close();
+
+if (empty($cartItems)) {
+    header("Location: products.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
-    <title>Produkty</title>
+    <title>Dokončení objednávky – ChewForever</title>
     <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/style_products.css">
+    <link rel="stylesheet" href="style/style_cart.css">
+    <link rel="icon" type="image/png" href="pics/icon.png">
     <style>
             body {
     font-family: sans-serif;
@@ -90,8 +120,8 @@ $result = $db->query($query);
 }
     </style>
 </head>
-<body>
 
+<body>
 <div class="header">
     <div class="header-left">
         <a href="index.php" class="nav-link">HOME</a>
@@ -124,22 +154,43 @@ $result = $db->query($query);
     </div>
 </div>
 
-<div class="product-container">
-    <h1>Naše produkty</h1>
-    <div class="product-grid">
-        
-        <?php while ($product = $result->fetch_assoc()) { ?>
-            <a href="product_detail.php?id=<?php echo $product['id']; ?>" class="product-link">
-                <div class="product-card">
-                    <img src="/ch/<?php echo htmlentities($product['image_url']); ?>" alt="<?php echo htmlentities($product['name']); ?>">
-                    <h2><?php echo htmlentities($product['name']); ?></h2>
-                    <p><?php echo number_format($product['price'], 2); ?> Kč</p>
-                    <p class="category">Kategorie: <?php echo htmlentities($product['category_name']); ?></p>
-                </div>
-            </a>
-        <?php } ?>
-    </div>
-</div>
+    <div class="cart-container">
+        <h1>Rekapitulace a dokončení objednávky</h1>
+        <p>Prosím, zkontrolujte položky ve své objednávce. Kliknutím na tlačítko níže objednávku závazně potvrdíte.</p>
 
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Produkt</th>
+                    <th>Cena za kus</th>
+                    <th>Množství</th>
+                    <th>Celkem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($cartItems as $item) {
+                    $subtotal = $item['price'] * $item['quantity'];
+                    $totalPrice += $subtotal;
+                ?>
+                    <tr>
+                        <td>
+                            <strong><?php echo htmlentities($item['name']); ?></strong><br>
+                            <small>Velikost: <?php echo htmlentities($item['size']); ?></small>
+                        </td>
+                        <td><?php echo number_format($item['price'], 2, ',', ' '); ?> Kč</td>
+                        <td><?php echo $item['quantity']; ?></td>
+                        <td><?php echo number_format($subtotal, 2, ',', ' '); ?> Kč</td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <h2>Celkem k úhradě: <?php echo number_format($totalPrice, 2, ',', ' '); ?> Kč</h2>
+            <form action="checkout_logic.php" method="post">
+                <button type="submit" name="confirm_order" class="checkout-button">Závazně objednat</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

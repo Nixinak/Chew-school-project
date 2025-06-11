@@ -1,17 +1,18 @@
 <?php
+session_start();
 require_once "./php/config.php";
 require_once "./php/users.php";
 
-$query = "SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id";
-$result = $db->query($query);
+$orderId = isset($_GET['order_id']) ? (int)$_GET['order_id'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Produkty</title>
+    <title>Objednávka dokončena – ChewForever</title>
     <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/style_products.css">
+    <link rel="stylesheet" href="style/style_cart.css">
+    <link rel="icon" type="image/png" href="pics/icon.png">
     <style>
             body {
     font-family: sans-serif;
@@ -91,7 +92,6 @@ $result = $db->query($query);
     </style>
 </head>
 <body>
-
 <div class="header">
     <div class="header-left">
         <a href="index.php" class="nav-link">HOME</a>
@@ -124,22 +124,13 @@ $result = $db->query($query);
     </div>
 </div>
 
-<div class="product-container">
-    <h1>Naše produkty</h1>
-    <div class="product-grid">
-        
-        <?php while ($product = $result->fetch_assoc()) { ?>
-            <a href="product_detail.php?id=<?php echo $product['id']; ?>" class="product-link">
-                <div class="product-card">
-                    <img src="/ch/<?php echo htmlentities($product['image_url']); ?>" alt="<?php echo htmlentities($product['name']); ?>">
-                    <h2><?php echo htmlentities($product['name']); ?></h2>
-                    <p><?php echo number_format($product['price'], 2); ?> Kč</p>
-                    <p class="category">Kategorie: <?php echo htmlentities($product['category_name']); ?></p>
-                </div>
-            </a>
+    <div class="cart-container" style="text-align: center;">
+        <h1>Děkujeme za vaši objednávku!</h1>
+        <p>Vaše objednávka byla úspěšně přijata a je zpracovávána.</p>
+        <?php if ($orderId > 0) { ?>
+            <p>Číslo vaší objednávky je: <strong><?php echo $orderId; ?></strong></p>
         <?php } ?>
+        <a href="products.php" class="checkout-button" style="text-decoration: none; display: inline-block;">Zpět na produkty</a>
     </div>
-</div>
-
 </body>
 </html>

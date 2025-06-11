@@ -1,6 +1,6 @@
 body {
-    background-color: #fff;
-    color: #000;
+    background-color: #000000;
+    color: rgb(255, 255, 255);
     font-family: "Helvetica Neue", sans-serif;
     margin: 0;
     padding: 0;
@@ -68,8 +68,8 @@ body {
 }
 
 .size-option label {
-    border: 1px solid #000;
-    padding: 6px 14px;
+    border: 1px solid #ffffff;
+    padding: 20px 20px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 500;

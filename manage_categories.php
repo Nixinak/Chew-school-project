@@ -60,88 +60,114 @@ $categoriesResult = $db->query("SELECT * FROM categories ORDER BY name");
     <link rel="stylesheet" href="style/style_admin_panel.css">
     <link rel="icon" type="image/png" href="pics/icon.png">
     <style>
-        table {
-            width: 100%;
-            background-color: #1c1c1c;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #333;
-            text-align: left;
-            color: #eee;
-        }
-        th {
-            background-color: #2a2a2a;
-        }
-        button.delete {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button.delete:hover {
-            background-color: darkred;
-        }
+    table {
+        width: 100%;
+        background-color: #1c1c1c;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        .form-box {
-            max-width: 600px;
-            background-color: #1c1c1c;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 40px;
-        }
-        .form-box label {
-            display: block;
-            margin-top: 15px;
-            color: #ccc;
-            font-size: 14px;
-        }
-        .form-box input[type="text"],
-        .form-box textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            background-color: #2a2a2a;
-            color: #eee;
-            box-sizing: border-box;
-        }
-        .form-box textarea {
-            resize: vertical;
-        }
-        .form-box button,
-        .form-box a {
-            margin-top: 20px;
-            display: inline-block;
-            background-color: #fff;
-            color: #000;
-            padding: 10px 16px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .form-box a {
-            background-color: #444;
-            color: #eee;
-            margin-left: 10px;
-        }
-        .form-box button:hover {
-            background-color: #ddd;
-        }
-    </style>
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        text-align: left;
+        color: #eee;
+    }
+
+    th {
+        background-color: #2a2a2a;
+    }
+
+    button.delete {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button.delete:hover {
+        background-color: darkred;
+    }
+
+    a.edit-button {
+        display: inline-block;
+        background-color: #2196F3;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    a.edit-button:hover {
+        background-color: #0b7dda;
+    }
+
+    .form-box {
+        max-width: 600px;
+        background-color: #1c1c1c;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+    }
+
+    .form-box label {
+        display: block;
+        margin-top: 15px;
+        color: #ccc;
+        font-size: 14px;
+    }
+
+    .form-box input[type="text"],
+    .form-box textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #333;
+        border-radius: 4px;
+        background-color: #2a2a2a;
+        color: #eee;
+        box-sizing: border-box;
+    }
+
+    .form-box textarea {
+        resize: vertical;
+    }
+
+    .form-box button,
+    .form-box a.cancel {
+        margin-top: 20px;
+        display: inline-block;
+        background-color: #fff;
+        color: #000;
+        padding: 10px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .form-box a.cancel {
+        background-color: #444;
+        color: #eee;
+        margin-left: 10px;
+    }
+
+    .form-box button:hover {
+        background-color: #ddd;
+    }
+</style>
+
 </head>
 <body>
 <div class="admin-container">
     <div class="admin-sidebar">
         <h2>Admin Panel</h2>
         <a href="admin_panel.php">Admin Panel</a>
-        <a href="delete_products.php">Správa produktů</a>
+        <a href="manage_products.php">Správa produktů</a>
         <a href="add_product.php">Přidat nový produkt</a>
         <a href="manage_categories.php">Správa kategorií</a>
         <a href="manage_users.php">Správa uživatelů</a>
@@ -192,7 +218,7 @@ $categoriesResult = $db->query("SELECT * FROM categories ORDER BY name");
                         <td><?php echo htmlentities($category['name']); ?></td>
                         <td><?php echo htmlentities($category['description']); ?></td>
                         <td>
-                            <a href="manage_categories.php?edit_id=<?php echo $category['id']; ?>">Upravit</a>
+                        <a href="manage_categories.php?edit_id=<?php echo $category['id']; ?>" class="edit-button">Upravit</a>
                             <form method="post" style="display:inline-block;">
                                 <input type="hidden" name="id" value="<?php echo $category['id']; ?>">
                                 <button type="submit" name="delete_category" class="delete">Smazat</button>
